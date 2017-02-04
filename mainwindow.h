@@ -23,6 +23,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QSqlDatabase dbase;
+    QString getSelectString(QString,QString,QString);
+    void fillTableView(QSqlQuery);
 };
 
 class NonEditTableColumnDelegate : public QItemDelegate

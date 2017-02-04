@@ -2,7 +2,82 @@
 #include "ui_mainwindow.h"
 
 
+QString MainWindow::getSelectString( QString name, QString year, QString rate)
+{
+    QString select = "";
 
+   bool isFirstArg = true;
+  select = "SELECT * FROM my_table";
+  if(name != "")
+  {
+          if(isFirstArg == true)
+          {
+              select += " WHERE ";
+              isFirstArg = false;
+          }
+      select += "name = '" + name+"'";
+   }
+  if(year != "")
+  {
+          if(isFirstArg == true)
+          {
+              select += " WHERE ";
+              isFirstArg = false;
+          }
+          else
+              select +=" AND ";
+
+      select+= "year = "+year;
+  }
+  if(rate != "")
+  {
+      if(isFirstArg == true)
+          {
+             select += " WHERE ";
+             isFirstArg = false;
+          }
+          else
+             select +=" AND ";
+
+     select+= "rate = "+rate;
+  }
+    return select;
+}
+
+void MainWindow::fillTableView(QSqlQuery query)
+{
+    QSqlRecord rec = query.record();
+    int number = 0 ,
+            year = 0,
+            rate = 0;
+    QString
+            name = "",
+            director = "";
+
+     int numberOfRows = 0;
+     if(query.last())
+     {
+         numberOfRows =  query.at() + 1;
+         query.first();
+         query.previous();
+     }
+
+     ui->tableWidget->setRowCount(numberOfRows);
+
+    for (int coloum = 0; query.next(); coloum++)
+    {
+        number = query.value(rec.indexOf("number")).toInt();
+        name = query.value(rec.indexOf("name")).toString();
+        director = query.value(rec.indexOf("director")).toString();
+        year = query.value(rec.indexOf("year")).toInt();
+        rate = query.value(rec.indexOf("rate")).toInt();
+
+        ui->tableWidget->setItem(coloum,0,new QTableWidgetItem(name));
+        ui->tableWidget->setItem(coloum,1,new QTableWidgetItem(director));
+        ui->tableWidget->setItem(coloum,2,new QTableWidgetItem(QString::number(year)));
+        ui->tableWidget->setItem(coloum,3,new QTableWidgetItem(QString::number(rate)));
+    }
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -113,55 +188,11 @@ MainWindow::~MainWindow()
 void MainWindow::on_searchButton_clicked()
 {
        QSqlQuery a_query;
-
-       QString select;
-
-      QString filter_film = ui->filmEdit->text();
-      QString filter_year = ui->yearEdit->text();
-      QString filter_rate = ui->rateEdit->text();
-
-      qDebug() << "filter_film is " << filter_film
-               << ". filter_year is " << filter_year
-               << ". filter_rate" << filter_rate;
-       //if()
-
-       if (!a_query.exec("SELECT * FROM my_table WHERE year = '2005' name = 'Sleeper'")) {
+       if (!a_query.exec(getSelectString(ui->filmEdit->text(),ui->yearEdit->text(),ui->rateEdit->text()))) {
             qDebug() << "Даже селект не получается, я пас.";
        }
 
-       QSqlRecord rec = a_query.record();
-       int number = 0 ,
-               year = 0,
-               rate = 0;
-       QString
-               name = "",
-               director = "";
-
-        int numberOfRows = 0;
-        if(a_query.last())
-        {
-            numberOfRows =  a_query.at() + 1;
-            a_query.first();
-            a_query.previous();
-        }
-
-        ui->tableWidget->setRowCount(numberOfRows);
-
-       for (int coloum = 0; a_query.next(); coloum++)
-       {
-           number = a_query.value(rec.indexOf("number")).toInt();
-           name = a_query.value(rec.indexOf("name")).toString();
-           director = a_query.value(rec.indexOf("director")).toString();
-           year = a_query.value(rec.indexOf("year")).toInt();
-           rate = a_query.value(rec.indexOf("rate")).toInt();
-
-           ui->tableWidget->setItem(coloum,0,new QTableWidgetItem(name));
-           ui->tableWidget->setItem(coloum,1,new QTableWidgetItem(director));
-           ui->tableWidget->setItem(coloum,2,new QTableWidgetItem(QString::number(year)));
-           ui->tableWidget->setItem(coloum,3,new QTableWidgetItem(QString::number(rate)));
-
-
-       }
+    fillTableView(a_query);
 }
 
 void MainWindow::on_resetButton_clicked()
@@ -170,4 +201,11 @@ void MainWindow::on_resetButton_clicked()
     ui->yearEdit->clear();
     ui->rateEdit->clear();
 
+    QSqlQuery a_query;
+
+    if (!a_query.exec("SELECT * FROM my_table")) {
+        //return -2;
+    }
+
+    fillTableView(a_query);
 }
