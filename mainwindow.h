@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtSql>
+#include "dbwrapper.h"
 
 namespace Ui {
 class MainWindow;
@@ -15,15 +16,19 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
+signals:
+    s_searchRequest(QString,QString,QString);
 private slots:
     void on_searchButton_clicked();
 
     void on_resetButton_clicked();
+
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase dbase;
-    QString getSelectString(QString,QString,QString);
+    dbWrapper Db;
+    QString generateSelectQuery(QString,QString,QString);
     void fillTableView(QSqlQuery);
 };
 

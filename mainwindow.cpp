@@ -2,47 +2,6 @@
 #include "ui_mainwindow.h"
 
 
-QString MainWindow::getSelectString( QString name, QString year, QString rate)
-{
-    QString select = "";
-
-   bool isFirstArg = true;
-  select = "SELECT * FROM my_table";
-  if(name != "")
-  {
-          if(isFirstArg == true)
-          {
-              select += " WHERE ";
-              isFirstArg = false;
-          }
-      select += "name = '" + name+"'";
-   }
-  if(year != "")
-  {
-          if(isFirstArg == true)
-          {
-              select += " WHERE ";
-              isFirstArg = false;
-          }
-          else
-              select +=" AND ";
-
-      select+= "year = "+year;
-  }
-  if(rate != "")
-  {
-      if(isFirstArg == true)
-          {
-             select += " WHERE ";
-             isFirstArg = false;
-          }
-          else
-             select +=" AND ";
-
-     select+= "rate = "+rate;
-  }
-    return select;
-}
 
 void MainWindow::fillTableView(QSqlQuery query)
 {
@@ -83,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
+
     ui->setupUi(this);
     ui->tableWidget->setColumnCount(4);
     ui->tableWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
@@ -93,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
    ui->yearEdit->setValidator( new QIntValidator(0, 9999, this) );
    ui->rateEdit->setValidator( new QIntValidator(0, 100, this) );
+
+   QObject::connect(this,SIGNAL(s_searchRequest(QString,QString,QString)),&Db,SLOT( generateSelectQueryByFilter(QString,QString,QString)));
 
     dbase = QSqlDatabase::addDatabase("QSQLITE");
     dbase.setDatabaseName("my_db.sqlite");
@@ -187,12 +150,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_searchButton_clicked()
 {
-       QSqlQuery a_query;
-       if (!a_query.exec(getSelectString(ui->filmEdit->text(),ui->yearEdit->text(),ui->rateEdit->text()))) {
-            qDebug() << "Даже селект не получается, я пас.";
-       }
-
-    fillTableView(a_query);
+      // QSqlQuery a_query;
+       //if (!a_query.exec(generateSelectQuery(ui->filmEdit->text(),ui->yearEdit->text(),ui->rateEdit->text()))) {
+       //     qDebug() << "Даже селект не получается, я пас.";
+       //}
+    emit s_searchRequest(ui->filmEdit->text(),ui->yearEdit->text(),ui->rateEdit->text());
+   // fillTableView(a_query);
 }
 
 void MainWindow::on_resetButton_clicked()
