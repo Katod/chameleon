@@ -54,13 +54,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
 
-    ui->setupUi(this);
-    ui->tableWidget->setColumnCount(4);
-    ui->tableWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    ui->tableWidget->setHorizontalHeaderLabels(QString("Название ;Режиссер ;Год ;Рейтинг").split(";"));
-    ui->tableWidget->setItemDelegateForColumn(0, new NonEditTableColumnDelegate());
-    ui->tableWidget->setItemDelegateForColumn(1, new NonEditTableColumnDelegate());
-    ui->tableWidget->setItemDelegateForColumn(2, new NonEditTableColumnDelegate());
+   ui->setupUi(this);
+   ui->tableWidget->setColumnCount(4);
+   ui->tableWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+   ui->tableWidget->setHorizontalHeaderLabels(QString("Название ;Режиссер ;Год ;Рейтинг").split(";"));
+   ui->tableWidget->setItemDelegateForColumn(0, new NonEditTableColumnDelegate());
+   ui->tableWidget->setItemDelegateForColumn(1, new NonEditTableColumnDelegate());
+   ui->tableWidget->setItemDelegateForColumn(2, new NonEditTableColumnDelegate());
+   ui->tableWidget->setItemDelegate(new NumberFormatDelegate());
 
    ui->yearEdit->setValidator( new QIntValidator(0, 9999, this) );
    ui->rateEdit->setValidator( new QIntValidator(0, 100, this) );
@@ -90,7 +91,7 @@ void MainWindow::on_resetButton_clicked()
     ui->yearEdit->clear();
     ui->rateEdit->clear();
 
-    emit s_searchRequest(ui->filmEdit->text(),ui->yearEdit->text(),ui->rateEdit->text());
+    emit s_searchRequest("","","");
 }
 
 void MainWindow::refreshTableView()
@@ -137,25 +138,33 @@ void MainWindow::on_addButton_clicked()
 }
 
 
-void MainWindow::on_tableWidget_itemSelectionChanged()
-{
-  //int row = ui->tableWidget->currentRow();
-    if(enteredRow >= 0)
-    {
-        if(oldRateValue !=ui->tableWidget->item(enteredRow,3)->text())
-            Db.updateRating(ui->tableWidget->item(enteredRow,0)->text(),
-                            ui->tableWidget->item(enteredRow,3)->text());
-    }
-     qDebug() <<"Unselect";
-}
+//void MainWindow::on_tableWidget_itemSelectionChanged()
+//{
+//  //int row = ui->tableWidget->currentRow();
+//    if(enteredRow >= 0)
+//    {
+//        if(oldRateValue !=ui->tableWidget->item(enteredRow,3)->text())
+//            Db.updateRating(ui->tableWidget->item(enteredRow,0)->text(),
+//                            ui->tableWidget->item(enteredRow,3)->text());
+//    }
+//     qDebug() <<"Unselect";
+//}
 
 
 
 void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
-    enteredRow = row;
-    if(row >= 0)
+    isChangedByUser = true;
+}
+
+void MainWindow::on_tableWidget_cellChanged(int row, int column)
+{
+
+    if(isChangedByUser)
     {
-        oldRateValue = ui->tableWidget->item(row,3)->text();
+        isChangedByUser = false;
+            Db.updateRating(ui->tableWidget->item(row,0)->text(),
+                            ui->tableWidget->item(row,3)->text());
     }
+
 }

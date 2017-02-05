@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include "dbwrapper.h"
 #include "addfilmdialog.h"
+#include "numberformatdelegate.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -27,15 +29,17 @@ private slots:
     void on_addButton_clicked();
     void refreshTableView();
 
-    void on_tableWidget_itemSelectionChanged();
+   // void on_tableWidget_itemSelectionChanged();
 
     void on_tableWidget_cellClicked(int row, int column);
+
+    void on_tableWidget_cellChanged(int row, int column);
 
 private:
     Ui::MainWindow *ui;
     dbWrapper Db;
     QString oldRateValue ="";
-    int enteredRow = 0;
+    bool isChangedByUser = false;
     QString generateSelectQuery(QString,QString,QString);
 
 };

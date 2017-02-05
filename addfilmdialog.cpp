@@ -106,6 +106,7 @@ void addFilmDialog::warningExistFilm()
 void addFilmDialog::dialogNewDirector()
 {
     msgBox.setText("Режиссер не найден в БД. Добавить его и закончить добавление фильма?");
+    msgBox.setWindowFlags(windowFlags()^Qt::WindowCloseButtonHint);
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     int ret = msgBox.exec();
     // Собственно вот этот case и отвечает за обработку событий
