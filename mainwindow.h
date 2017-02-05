@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include "dbwrapper.h"
+#include "addfilmdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,8 @@ private slots:
     void fillTableView(QSqlQuery);
 
     void on_informationButton_clicked();
+
+    void on_addButton_clicked();
 
 private:
     Ui::MainWindow *ui;

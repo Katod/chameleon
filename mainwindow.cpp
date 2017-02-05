@@ -114,3 +114,17 @@ void MainWindow::on_informationButton_clicked()
              msgBox->show();
  }
 }
+
+void MainWindow::on_addButton_clicked()
+{
+    addFilmDialog* pFilmDialog = new addFilmDialog;
+    pFilmDialog->exec();
+
+    if (pFilmDialog->exec() == QDialog::Accepted) {
+               QMessageBox::information(0,
+                                        "Information",
+                                        "First Name: "+pFilmDialog->getFilmName()
+                                       );
+           }
+           delete pFilmDialog;
+}
