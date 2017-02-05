@@ -16,9 +16,12 @@ private:
     QString selectQueryString;
 signals:
     s_selectQueryChange(QSqlQuery);
+    s_warning();
+    s_newDirector();
+    s_successAddNewItem();
 public slots:
-    void generateSelectQueryByFilter(QString,QString,QString);
-   // void addNewItem(QString film,QString director,int year,int rate);
+    void generateSelectQueryByFilter(QString name,QString year,QString rate);
+    void addNewItem(QString film,QString director,QString year,QString rate,bool isFinally);
 };
 
 #endif // DBWRAPPER_H

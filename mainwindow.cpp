@@ -97,28 +97,28 @@ void MainWindow::on_informationButton_clicked()
  int row = ui->tableWidget->currentRow();
  if(row == -1)
  {
-     msgBox  = new QMessageBox();
-             msgBox->setWindowTitle("Информация");
-             msgBox->setText("Не выбран элемент");
-             msgBox->show();
+    QMessageBox::information(0, "Информация", "Не выбран элемент");
  }
  else
  {
-     msgBox  = new QMessageBox();
-             msgBox->setWindowTitle("Информация");
-             msgBox->setText("Название: "+ui->tableWidget->item(row,0)->text()+
-                             "\nРежиссер: "+ui->tableWidget->item(row,1)->text()+
-                             "\nГод: "+ui->tableWidget->item(row,2)->text()+
-                             "\nРейтинг: "+ui->tableWidget->item(row,3)->text()
-                             );
-             msgBox->show();
+     QMessageBox::information(0, "Информация", "Название: "+ui->tableWidget->item(row,0)->text()+
+                              "\nРежиссер: "+ui->tableWidget->item(row,1)->text()+
+                              "\nГод: "+ui->tableWidget->item(row,2)->text()+
+                              "\nРейтинг: "+ui->tableWidget->item(row,3)->text());
  }
 }
 
 void MainWindow::on_addButton_clicked()
 {
+    qDebug() << "on_addButton_clicked";
     addFilmDialog* pFilmDialog = new addFilmDialog;
+
+    QObject::connect(pFilmDialog,SIGNAL(s_checkInputData(QString,QString,QString,QString,bool)),&Db,SLOT(addNewItem(QString ,QString ,QString ,QString,bool)));
+    QObject::connect(&Db,SIGNAL(s_warning()),pFilmDialog,SLOT(warningExistFilm()));
+    QObject::connect(&Db,SIGNAL(s_newDirector()),pFilmDialog,SLOT(dialogNewDirector()));
     pFilmDialog->exec();
+
+
 
     if (pFilmDialog->exec() == QDialog::Accepted) {
                QMessageBox::information(0,

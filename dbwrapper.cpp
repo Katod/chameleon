@@ -24,13 +24,7 @@ dbWrapper::dbWrapper(QObject *parent) : QObject(parent)
     }
 
     // DML
-    QString str_insert = "INSERT INTO my_table(number, name, director,year,rate) "
-            "VALUES (%1, '%2', '%3', %4, %5);";
-    str = str_insert.arg("13")
-            .arg("Sleeper")
-            .arg("Stiven King")
-            .arg("2005")
-            .arg("5");
+
 
 
     b = m_query.exec(str);
@@ -89,6 +83,52 @@ void dbWrapper::generateSelectQueryByFilter(QString name, QString year, QString 
     s_selectQueryChange(m_query);
 
 }
+
+void dbWrapper::addNewItem(QString film,QString director,QString year,QString rate,bool isFinally)
+{
+    QSqlQuery query;
+    qDebug()<<" check Name";
+
+    if (!query.exec("SELECT * FROM my_table WHERE name = '"+film+"'")) {
+              qDebug() << "cant select film";
+         }
+
+     if(query.first())
+     {
+         qDebug()<<"WArning already exist";
+         emit s_warning();
+         return;
+     }
+
+
+    qDebug()<<" check director";
+
+    if (!query.exec("SELECT * FROM my_table WHERE director = '"+director+"'")) {
+              qDebug() << "cant select director";
+         }
+
+     if(!query.first() && isFinally == false)
+     {
+         qDebug()<<"NEW director in db";
+         emit s_newDirector();
+         return;
+     }
+
+     // DML
+     QString str_insert = "INSERT INTO my_table(number, name, director,year,rate) "
+             "VALUES (%1, '%2', '%3', %4, %5);";
+     QString str = str_insert.arg(22)
+             .arg(film)
+             .arg(director)
+             .arg(year.toInt())
+             .arg(rate.toInt());
+
+     if (!query.exec(str)) {
+                qDebug() << "Кажется данные не вставляются, проверьте дверь, может она закрыта?";
+            }
+
+}
+
 
 void dbWrapper::openDb()
 {

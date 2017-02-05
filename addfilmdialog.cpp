@@ -1,6 +1,7 @@
 #include <QtGui>
 #include "addfilmdialog.h"
 
+
 addFilmDialog::addFilmDialog(QWidget* pwgt/*= 0*/)
      : QDialog(pwgt, Qt::WindowTitleHint | Qt::WindowSystemMenuHint)
 {
@@ -24,8 +25,9 @@ addFilmDialog::addFilmDialog(QWidget* pwgt/*= 0*/)
     pcmdAdd->setEnabled(false);
     pcmdCancel = new QPushButton("&Отмена");
 
-    connect(pcmdAdd, SIGNAL(clicked()), SLOT(accept()));
-    connect(pcmdCancel, SIGNAL(clicked()), SLOT(reject()));
+    connect(pcmdAdd, SIGNAL(clicked()), this,SLOT(acceptAndCheck()));
+    connect(pcmdCancel, SIGNAL(clicked()),this,SLOT(reject()));
+
 
     connect(m_ptxtFilmName,SIGNAL(editingFinished()),this,SLOT(checkValidData()));
     connect(m_ptxtDirector,SIGNAL(editingFinished()),this,SLOT(checkValidData()));
@@ -69,9 +71,55 @@ QString addFilmDialog::getRate() const
     return m_ptxtRate->text();
 }
 
+
+void addFilmDialog::acceptAndCheck()
+{
+    qDebug() << "accept";
+    emit s_checkInputData(m_ptxtFilmName->text(),
+                          m_ptxtDirector->text(),
+                          m_ptxtYear->text(),
+                          m_ptxtRate->text(),
+                          false
+                          );
+    //addFilmDialog::close();
+
+}
+
+
 void addFilmDialog::checkValidData()
 {
   if(m_ptxtFilmName->text() != "" && m_ptxtDirector->text() != "" && m_ptxtYear->text() != "")
     pcmdAdd->setEnabled(true);
 
 }
+
+void addFilmDialog::warningExistFilm()
+{
+    QMessageBox::warning(0,"Предупреждение", "Фильм с таким названием уже есть в базе");
+}
+
+void addFilmDialog::dialogNewDirector()
+{
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    int ret = msgBox.exec();
+    // Собственно вот этот case и отвечает за обработку событий
+    switch (ret) {
+    case QMessageBox::Cancel:
+         qDebug()<<" QMessageBox::Cancel:";
+         break;
+      case QMessageBox::Ok:
+        emit s_checkInputData(m_ptxtFilmName->text(),
+                              m_ptxtDirector->text(),
+                              m_ptxtYear->text(),
+                              m_ptxtRate->text(),
+                              true
+                              );
+         break;
+      default:
+         // Сюда пишем обработку события по умолчанию
+         break;
+    }
+}
+
+
+
