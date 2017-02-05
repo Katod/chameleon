@@ -67,6 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
    QObject::connect(this,SIGNAL(s_searchRequest(QString,QString,QString)),&Db,SLOT( generateSelectQueryByFilter(QString,QString,QString)));
    QObject::connect(&Db,SIGNAL(s_selectQueryChange(QSqlQuery)),this,SLOT( fillTableView(QSqlQuery)));
+   QObject::connect(&Db,SIGNAL(s_successAddNewItem()),this,SLOT( refreshTableView()));
+
 
    emit s_searchRequest(ui->filmEdit->text(),ui->yearEdit->text(),ui->rateEdit->text());
 }
@@ -88,6 +90,11 @@ void MainWindow::on_resetButton_clicked()
     ui->yearEdit->clear();
     ui->rateEdit->clear();
 
+    emit s_searchRequest(ui->filmEdit->text(),ui->yearEdit->text(),ui->rateEdit->text());
+}
+
+void MainWindow::refreshTableView()
+{
     emit s_searchRequest(ui->filmEdit->text(),ui->yearEdit->text(),ui->rateEdit->text());
 }
 
@@ -127,4 +134,28 @@ void MainWindow::on_addButton_clicked()
                                        );
            }
            delete pFilmDialog;
+}
+
+
+void MainWindow::on_tableWidget_itemSelectionChanged()
+{
+  //int row = ui->tableWidget->currentRow();
+    if(enteredRow >= 0)
+    {
+        if(oldRateValue !=ui->tableWidget->item(enteredRow,3)->text())
+            Db.updateRating(ui->tableWidget->item(enteredRow,0)->text(),
+                            ui->tableWidget->item(enteredRow,3)->text());
+    }
+     qDebug() <<"Unselect";
+}
+
+
+
+void MainWindow::on_tableWidget_cellClicked(int row, int column)
+{
+    enteredRow = row;
+    if(row >= 0)
+    {
+        oldRateValue = ui->tableWidget->item(row,3)->text();
+    }
 }

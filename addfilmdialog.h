@@ -18,7 +18,6 @@ private:
     QPushButton* pcmdAdd;
     QPushButton* pcmdCancel;
     QMessageBox msgBox;
-
 public:
     addFilmDialog(QWidget* pwgt = 0);
     QString getFilmName() const;

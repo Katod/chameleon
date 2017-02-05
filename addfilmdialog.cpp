@@ -16,6 +16,9 @@ addFilmDialog::addFilmDialog(QWidget* pwgt/*= 0*/)
     QLabel* plblYear        = new QLabel("&Год");
     QLabel* plblRate        = new QLabel("&Рейтинг");
 
+    m_ptxtYear->setValidator( new QIntValidator(0, 9999, this) );
+    m_ptxtRate->setValidator( new QIntValidator(0, 100, this) );
+
     plblFilmName->setBuddy(m_ptxtFilmName);
     plblDirector->setBuddy(m_ptxtDirector);
     plblYear->setBuddy(m_ptxtYear);
@@ -90,6 +93,8 @@ void addFilmDialog::checkValidData()
 {
   if(m_ptxtFilmName->text() != "" && m_ptxtDirector->text() != "" && m_ptxtYear->text() != "")
     pcmdAdd->setEnabled(true);
+  else
+    pcmdAdd->setEnabled(false);
 
 }
 
@@ -100,6 +105,7 @@ void addFilmDialog::warningExistFilm()
 
 void addFilmDialog::dialogNewDirector()
 {
+    msgBox.setText("Режиссер не найден в БД. Добавить его и закончить добавление фильма?");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     int ret = msgBox.exec();
     // Собственно вот этот case и отвечает за обработку событий

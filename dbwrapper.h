@@ -22,6 +22,7 @@ signals:
 public slots:
     void generateSelectQueryByFilter(QString name,QString year,QString rate);
     void addNewItem(QString film,QString director,QString year,QString rate,bool isFinally);
+    void updateRating(QString film, QString rate);
 };
 
 #endif // DBWRAPPER_H

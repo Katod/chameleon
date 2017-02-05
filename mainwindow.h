@@ -23,15 +23,21 @@ private slots:
     void on_searchButton_clicked();
     void on_resetButton_clicked();
     void fillTableView(QSqlQuery);
-
     void on_informationButton_clicked();
-
     void on_addButton_clicked();
+    void refreshTableView();
+
+    void on_tableWidget_itemSelectionChanged();
+
+    void on_tableWidget_cellClicked(int row, int column);
 
 private:
     Ui::MainWindow *ui;
     dbWrapper Db;
+    QString oldRateValue ="";
+    int enteredRow = 0;
     QString generateSelectQuery(QString,QString,QString);
+
 };
 
 class NonEditTableColumnDelegate : public QItemDelegate

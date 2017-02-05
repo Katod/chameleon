@@ -1,5 +1,6 @@
 #include "dbwrapper.h"
 
+
 dbWrapper::dbWrapper(QObject *parent) : QObject(parent)
 {
     dbase = QSqlDatabase::addDatabase("QSQLITE");
@@ -12,8 +13,7 @@ dbWrapper::dbWrapper(QObject *parent) : QObject(parent)
     QSqlQuery m_query;
     // DDL query
     QString str = "CREATE TABLE my_table ("
-            "number integer PRIMARY KEY NOT NULL, "
-            "name VARCHAR(255) NOT NULL , "
+            "name VARCHAR(255)  PRIMARY KEY NOT NULL , "
             "director VARCHAR(255) NOT NULL ,"
             "year integer NOT NULL ,"
             "rate integer"
@@ -115,10 +115,9 @@ void dbWrapper::addNewItem(QString film,QString director,QString year,QString ra
      }
 
      // DML
-     QString str_insert = "INSERT INTO my_table(number, name, director,year,rate) "
-             "VALUES (%1, '%2', '%3', %4, %5);";
-     QString str = str_insert.arg(22)
-             .arg(film)
+     QString str_insert = "INSERT INTO my_table(name, director,year,rate) "
+             "VALUES ('%1', '%2', %3, %4);";
+     QString str = str_insert.arg(film)
              .arg(director)
              .arg(year.toInt())
              .arg(rate.toInt());
@@ -126,9 +125,22 @@ void dbWrapper::addNewItem(QString film,QString director,QString year,QString ra
      if (!query.exec(str)) {
                 qDebug() << "Кажется данные не вставляются, проверьте дверь, может она закрыта?";
             }
+     else
+         emit s_successAddNewItem();
 
 }
 
+void dbWrapper::updateRating(QString film, QString rate)
+{
+ QSqlQuery query;
+QString exec = " UPDATE my_table SET rate ="+rate+" WHERE name ='"+film+"'";
+qDebug() << exec;
+   if (! query.exec(exec)) {
+             qDebug() << "Cant update";
+         }
+    else
+        emit s_successAddNewItem();
+}
 
 void dbWrapper::openDb()
 {
