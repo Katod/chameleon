@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtSql>
+//#include <QtSql>
 #include "dbwrapper.h"
 
 namespace Ui {
@@ -20,16 +20,15 @@ signals:
     s_searchRequest(QString,QString,QString);
 private slots:
     void on_searchButton_clicked();
-
     void on_resetButton_clicked();
+    void fillTableView(QSqlQuery);
 
+    void on_informationButton_clicked();
 
 private:
     Ui::MainWindow *ui;
-    QSqlDatabase dbase;
     dbWrapper Db;
     QString generateSelectQuery(QString,QString,QString);
-    void fillTableView(QSqlQuery);
 };
 
 class NonEditTableColumnDelegate : public QItemDelegate

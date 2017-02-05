@@ -25,9 +25,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dbwrapper.cpp
+    dbwrapper.cpp \
+    informationdialog.cpp
 
 HEADERS  += mainwindow.h \
-    dbwrapper.h
+    dbwrapper.h \
+    informationdialog.h
 
 FORMS    += mainwindow.ui

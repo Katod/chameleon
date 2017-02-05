@@ -7,11 +7,12 @@
 class dbWrapper : public QObject
 {
     Q_OBJECT
-public:
+public:   
     explicit dbWrapper(QObject *parent = 0);
+    void openDb();
 private:
+    QSqlDatabase dbase;
     QString selectQueryString;
-   // QSqlQuery m_query;
 signals:
     s_selectQueryChange(QSqlQuery);
 public slots:
