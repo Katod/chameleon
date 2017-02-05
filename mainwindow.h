@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-//#include <QtSql>
+#include <QMessageBox>
 #include "dbwrapper.h"
 
 namespace Ui {
@@ -15,6 +15,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    QMessageBox* msgBox;
 
 signals:
     s_searchRequest(QString,QString,QString);

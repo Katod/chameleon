@@ -95,8 +95,22 @@ void MainWindow::on_informationButton_clicked()
 {
  qDebug() << "on_informationButton_clicked";
  int row = ui->tableWidget->currentRow();
- qDebug() <<ui->tableWidget->item(row,0)->text();
- qDebug() <<ui->tableWidget->item(row,1)->text();
- qDebug() <<ui->tableWidget->item(row,2)->text();
- qDebug() <<ui->tableWidget->item(row,3)->text();
+ if(row == -1)
+ {
+     msgBox  = new QMessageBox();
+             msgBox->setWindowTitle("Информация");
+             msgBox->setText("Не выбран элемент");
+             msgBox->show();
+ }
+ else
+ {
+     msgBox  = new QMessageBox();
+             msgBox->setWindowTitle("Информация");
+             msgBox->setText("Название: "+ui->tableWidget->item(row,0)->text()+
+                             "\nРежиссер: "+ui->tableWidget->item(row,1)->text()+
+                             "\nГод: "+ui->tableWidget->item(row,2)->text()+
+                             "\nРейтинг: "+ui->tableWidget->item(row,3)->text()
+                             );
+             msgBox->show();
+ }
 }
