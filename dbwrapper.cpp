@@ -5,33 +5,19 @@ dbWrapper::dbWrapper(QObject *parent) : QObject(parent)
 {
     dbase = QSqlDatabase::addDatabase("QSQLITE");
     dbase.setDatabaseName("my_db.sqlite");
-    if (!dbase.open()) {
-        qDebug() << "Что-то пошло не так!";
-        //return -1;
-    }
 
-    QSqlQuery m_query;
-    // DDL query
+    dbase.open();
+
+    QSqlQuery query;
+
     QString str = "CREATE TABLE my_table ("
             "name VARCHAR(255)  PRIMARY KEY NOT NULL , "
             "director VARCHAR(255) NOT NULL ,"
             "year integer NOT NULL ,"
             "rate integer"
             ");";
-    bool b = m_query.exec(str);
-    if (!b) {
-        qDebug() << "Вроде не удается создать таблицу, провертье карманы!";
-    }
 
-    // DML
-
-
-
-    b = m_query.exec(str);
-
-    if (!b) {
-        qDebug() << "Кажется данные не вставляются, проверьте дверь, может она закрыта?";
-    }
+    query.exec(str);
 }
 
 
@@ -77,7 +63,7 @@ void dbWrapper::generateSelectQueryByFilter(QString name, QString year, QString 
     QSqlQuery m_query;
 
     if (!m_query.exec(select)) {
-              qDebug() << "Даже селект не получается, я пас."<<select;
+              qDebug() << "Cant select Data"<<select;
          }
 
     s_selectQueryChange(m_query);
@@ -117,13 +103,21 @@ void dbWrapper::addNewItem(QString film,QString director,QString year,QString ra
      // DML
      QString str_insert = "INSERT INTO my_table(name, director,year,rate) "
              "VALUES ('%1', '%2', %3, %4);";
-     QString str = str_insert.arg(film)
+     QString str = "";
+     if (rate == "")
+         str = str_insert.arg(film)
+                .arg(director)
+                .arg(year.toInt())
+                .arg("NULL");
+     else
+     {
+      str = str_insert.arg(film)
              .arg(director)
              .arg(year.toInt())
              .arg(rate.toInt());
-
+      }
      if (!query.exec(str)) {
-                qDebug() << "Кажется данные не вставляются, проверьте дверь, может она закрыта?";
+                qDebug() << "Can`t input data";
             }
      else
          emit s_successAddNewItem();
@@ -132,21 +126,13 @@ void dbWrapper::addNewItem(QString film,QString director,QString year,QString ra
 
 void dbWrapper::updateRating(QString film, QString rate)
 {
- QSqlQuery query;
-QString exec = " UPDATE my_table SET rate ="+rate+" WHERE name ='"+film+"'";
-qDebug() << exec;
-   if (! query.exec(exec)) {
-             qDebug() << "Cant update";
+    QSqlQuery query;
+    QString exec = " UPDATE my_table SET rate ="+rate+" WHERE name ='"+film+"'";
+
+    if (! query.exec(exec)) {
+             qDebug() << "Can`t update data";
          }
     else
         emit s_successAddNewItem();
 }
 
-void dbWrapper::openDb()
-{
-    //if (!m_query.exec(select)) {
-     //     qDebug() << "Даже селект не получается, я пас.";
-    // }
-    //else
-     //   emit s_selectQueryChange(m_query);
-}

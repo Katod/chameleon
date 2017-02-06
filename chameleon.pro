@@ -26,8 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     dbwrapper.cpp \
-    addfilmdialog.cpp \
-    numberformatdelegate.cpp
+    addfilmdialog.cpp
 
 HEADERS  += mainwindow.h \
     dbwrapper.h \

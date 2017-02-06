@@ -9,8 +9,6 @@ class dbWrapper : public QObject
     Q_OBJECT
 public:   
     explicit dbWrapper(QObject *parent = 0);
-    void openDb();
-   // bool checkInputData(QString film,QString director,int year,int rate);
 private:
     QSqlDatabase dbase;
     QString selectQueryString;

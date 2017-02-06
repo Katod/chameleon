@@ -7,7 +7,6 @@
 #include "addfilmdialog.h"
 #include "numberformatdelegate.h"
 
-
 namespace Ui {
 class MainWindow;
 }
@@ -21,6 +20,7 @@ public:
 
 signals:
     s_searchRequest(QString,QString,QString);
+
 private slots:
     void on_searchButton_clicked();
     void on_resetButton_clicked();
@@ -28,11 +28,7 @@ private slots:
     void on_informationButton_clicked();
     void on_addButton_clicked();
     void refreshTableView();
-
-   // void on_tableWidget_itemSelectionChanged();
-
     void on_tableWidget_cellClicked(int row, int column);
-
     void on_tableWidget_cellChanged(int row, int column);
 
 private:

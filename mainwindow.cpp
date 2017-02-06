@@ -5,18 +5,15 @@
 
 void MainWindow::fillTableView(QSqlQuery query)
 {
-    qDebug() << "fillTableView";
     QSqlRecord rec = query.record();
-    int number = 0 ,
-            year = 0;
 
+    int year = 0;
     QVariant rate ;
-
-    QString
-            name = "",
+    QString name = "",
             director = "";
 
      int numberOfRows = 0;
+
      if(query.last())
      {
          numberOfRows =  query.at() + 1;
@@ -28,7 +25,6 @@ void MainWindow::fillTableView(QSqlQuery query)
 
     for (int coloum = 0; query.next(); coloum++)
     {
-        number = query.value(rec.indexOf("number")).toInt();
         name = query.value(rec.indexOf("name")).toString();
         director = query.value(rec.indexOf("director")).toString();
         year = query.value(rec.indexOf("year")).toInt();
@@ -38,7 +34,7 @@ void MainWindow::fillTableView(QSqlQuery query)
         ui->tableWidget->setItem(coloum,2,new QTableWidgetItem(QString::number(year)));
 
         rate = query.value(rec.indexOf("rate"));
-        if ( rate == NULL)
+        if ( rate.isNull())
             ui->tableWidget->setItem(coloum,3,new QTableWidgetItem("No rate"));
         else
         {
@@ -52,8 +48,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-
-
    ui->setupUi(this);
    ui->tableWidget->setColumnCount(4);
    ui->tableWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
@@ -101,33 +95,30 @@ void MainWindow::refreshTableView()
 
 void MainWindow::on_informationButton_clicked()
 {
- qDebug() << "on_informationButton_clicked";
- int row = ui->tableWidget->currentRow();
- if(row == -1)
- {
-    QMessageBox::information(0, "Информация", "Не выбран элемент");
- }
- else
- {
-     QMessageBox::information(0, "Информация", "Название: "+ui->tableWidget->item(row,0)->text()+
-                              "\nРежиссер: "+ui->tableWidget->item(row,1)->text()+
-                              "\nГод: "+ui->tableWidget->item(row,2)->text()+
-                              "\nРейтинг: "+ui->tableWidget->item(row,3)->text());
- }
+    qDebug() << "on_informationButton_clicked";
+    int row = ui->tableWidget->currentRow();
+
+    if(row == -1)
+        QMessageBox::information(0, "Информация", "Не выбран элемент");
+    else
+    {
+        QMessageBox::information(0, "Информация", "Название: "+
+                                 ui->tableWidget->item(row,0)->text()+
+                                "\nРежиссер: "+ui->tableWidget->item(row,1)->text()+
+                                 "\nГод: "+ui->tableWidget->item(row,2)->text()+
+                                "\nРейтинг: "+ui->tableWidget->item(row,3)->text());
+    }
 }
 
 void MainWindow::on_addButton_clicked()
 {
-    qDebug() << "on_addButton_clicked";
     addFilmDialog* pFilmDialog = new addFilmDialog;
 
     QObject::connect(pFilmDialog,SIGNAL(s_checkInputData(QString,QString,QString,QString,bool)),&Db,SLOT(addNewItem(QString ,QString ,QString ,QString,bool)));
     QObject::connect(&Db,SIGNAL(s_warning()),pFilmDialog,SLOT(warningExistFilm()));
     QObject::connect(&Db,SIGNAL(s_newDirector()),pFilmDialog,SLOT(dialogNewDirector()));
+
     pFilmDialog->exec();
-
-
-
     if (pFilmDialog->exec() == QDialog::Accepted) {
                QMessageBox::information(0,
                                         "Information",
@@ -137,21 +128,6 @@ void MainWindow::on_addButton_clicked()
            delete pFilmDialog;
 }
 
-
-//void MainWindow::on_tableWidget_itemSelectionChanged()
-//{
-//  //int row = ui->tableWidget->currentRow();
-//    if(enteredRow >= 0)
-//    {
-//        if(oldRateValue !=ui->tableWidget->item(enteredRow,3)->text())
-//            Db.updateRating(ui->tableWidget->item(enteredRow,0)->text(),
-//                            ui->tableWidget->item(enteredRow,3)->text());
-//    }
-//     qDebug() <<"Unselect";
-//}
-
-
-
 void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
     isChangedByUser = true;
@@ -159,12 +135,10 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 
 void MainWindow::on_tableWidget_cellChanged(int row, int column)
 {
-
     if(isChangedByUser)
     {
         isChangedByUser = false;
-            Db.updateRating(ui->tableWidget->item(row,0)->text(),
-                            ui->tableWidget->item(row,3)->text());
+        Db.updateRating(ui->tableWidget->item(row,0)->text(),
+                        ui->tableWidget->item(row,3)->text());
     }
-
 }
